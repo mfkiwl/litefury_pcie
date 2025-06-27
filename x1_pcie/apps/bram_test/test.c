@@ -6,9 +6,6 @@
 #include <fcntl.h>
 #include <string.h>
 
-//#include "mem-io.h"
-//#include "utils.h"
-//#include "proto2_hw.h"
 #include "fpga.h"
 
 
@@ -26,7 +23,7 @@ int main(int argc,char** argv)
         if(base_addr == NULL) fprintf(stderr,"Can't mmap\n");
     }
 
-    printf("FPGA_BASE_ADDRESS = 0x%08x, virtual base_addr = %p\n", FPGA_BASE_ADDRESS, base_addr);
+    printf("FPGA_BASE_ADDRESS = 0x%08x, virtual base_addr = %p\n", (uint32_t)FPGA_BASE_ADDRESS, base_addr);
 
     uint32_t *regptr = base_addr + FPGA_REG_OFFSET;
 
