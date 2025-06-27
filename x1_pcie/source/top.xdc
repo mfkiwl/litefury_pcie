@@ -1,6 +1,17 @@
+## High-speed configuration so FPGA is up in time to negotiate with PCIe root complex
+#set_property BITSTREAM.CONFIG.EXTMASTERCCLK_EN Div-1 [current_design]
+#set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
+#set_property CONFIG_MODE SPIx4 [current_design]
+#set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design]
+#set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
+#set_property CONFIG_VOLTAGE 3.3 [current_design]
+#set_property CFGBVS VCCO [current_design]
 
-set_property CFGBVS VCCO        [current_design]
-set_property CONFIG_VOLTAGE 3.3 [current_design]
+set_property CFGBVS VCCO                        [current_design]
+set_property CONFIG_VOLTAGE 3.3                 [current_design]
+set_property BITSTREAM.CONFIG.CONFIGRATE 3      [current_design]
+set_property BITSTREAM.Config.SPI_BUSWIDTH 4    [current_design]
+set_property BITSTREAM.GENERAL.COMPRESS TRUE    [current_design]
 
 #create_clock -period  5.000 -name sysclk_p         -waveform {0.000 2.500} [get_ports {sysclk_p}]
 create_clock -period 10.000 -name pcie_clkin_clk_p -waveform {0.000 5.000} [get_ports pcie_clkin_clk_p]
