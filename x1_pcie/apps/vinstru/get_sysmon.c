@@ -20,7 +20,28 @@ float read_temp()
 
 float read_vccint()
 {
-    float vccint = 0.75;
+    FILE* pp = popen("vcgencmd pmic_read_adc | grep VDD_CORE_V", "r");
+    char buffer[256], fltstr[256];
+    fgets(buffer, sizeof(buffer), pp);
+    pclose(pp);
+
+    //printf("%s", buffer);
+
+    char* token = strtok(buffer, " =");
+    int whilecount = 0;
+    while (token != NULL) {
+        //printf("%d: %s\n", whilecount, token);
+        if (whilecount==2) strcpy(fltstr, token);
+        token = strtok(NULL, "=V");
+        whilecount++;
+    }
+    //printf("%s\n", fltstr);
+
+    char *endptr;
+    float vccint = strtof(fltstr, &endptr);
+    
+
+    //float vccint = 0.75;
     return(vccint);
 }
 
@@ -50,4 +71,7 @@ int main(int argc,char** argv)
     return 0;
 }
 
+// vcgencmd pmic_read_adc | grep 1V8_SYS_V
+// vcgencmd pmic_read_adc | grep VDD_CORE_V
+// VDD_CORE_V volt(15)=0.75186740V
 
