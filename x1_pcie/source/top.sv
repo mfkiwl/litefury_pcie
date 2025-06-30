@@ -28,27 +28,34 @@ module top (
 //    logic qspi_io3_i, qspi_io3_o, qspi_io3_t;
 //    logic qspi_ss_i,  qspi_ss_o,  qspi_ss_t;
     
-    logic [39:0]    M00_AXI_araddr;
-    logic [2:0]     M00_AXI_arprot;
-    logic           M00_AXI_arready;
-    logic           M00_AXI_arvalid;
-    logic [39:0]    M00_AXI_awaddr;
-    logic [2:0]     M00_AXI_awprot;
-    logic           M00_AXI_awready;
-    logic           M00_AXI_awvalid;
-    logic           M00_AXI_bready;
-    logic [1:0]     M00_AXI_bresp;
-    logic           M00_AXI_bvalid;
-    logic [31:0]    M00_AXI_rdata;
-    logic           M00_AXI_rready;
-    logic [1:0]     M00_AXI_rresp;
-    logic           M00_AXI_rvalid;
-    logic [31:0]    M00_AXI_wdata;
-    logic           M00_AXI_wready;
-    logic [3:0]     M00_AXI_wstrb;
-    logic           M00_AXI_wvalid;
-    logic           axi_aclk, axi_aresetn;
+//    logic [39:0]    M00_AXI_araddr;
+//    logic [2:0]     M00_AXI_arprot;
+//    logic           M00_AXI_arready;
+//    logic           M00_AXI_arvalid;
+//    logic [39:0]    M00_AXI_awaddr;
+//    logic [2:0]     M00_AXI_awprot;
+//    logic           M00_AXI_awready;
+//    logic           M00_AXI_awvalid;
+//    logic           M00_AXI_bready;
+//    logic [1:0]     M00_AXI_bresp;
+//    logic           M00_AXI_bvalid;
+//    logic [31:0]    M00_AXI_rdata;
+//    logic           M00_AXI_rready;
+//    logic [1:0]     M00_AXI_rresp;
+//    logic           M00_AXI_rvalid;
+//    logic [31:0]    M00_AXI_wdata;
+//    logic           M00_AXI_wready;
+//    logic [3:0]     M00_AXI_wstrb;
+//    logic           M00_AXI_wvalid;
+//    logic           axi_aclk, axi_aresetn;
    
+    logic [11:0]    regfile_addr;
+    logic           regfile_clk;
+    logic [31:0]    regfile_din;
+    logic [31:0]    regfile_dout;
+    logic           regfile_en;
+    logic           regfile_rst;
+    logic [3:0]     regfile_we;          
 
     system system_i(
         .pcie_clkin_clk_n   (pcie_clkin_clk_n),
@@ -59,27 +66,36 @@ module top (
         .pcie_mgt_txp       (pcie_mgt_txp),
         .pcie_reset         (pcie_reset),     
         //
+        .regfile_addr       (regfile_addr),
+        .regfile_clk        (regfile_clk),
+        .regfile_din        (regfile_din),
+        .regfile_dout       (regfile_dout),
+        .regfile_en         (regfile_en),
+        .regfile_rst        (regfile_rst),
+        .regfile_we         (regfile_we),  
+        //
         .axi_aclk           (axi_aclk),
-        .axi_aresetn        (axi_aresetn),
-        .M00_AXI_araddr     (M00_AXI_araddr),
-        .M00_AXI_arprot     (M00_AXI_arprot),
-        .M00_AXI_arready    (M00_AXI_arready),
-        .M00_AXI_arvalid    (M00_AXI_arvalid),
-        .M00_AXI_awaddr     (M00_AXI_awaddr),
-        .M00_AXI_awprot     (M00_AXI_awprot),
-        .M00_AXI_awready    (M00_AXI_awready),
-        .M00_AXI_awvalid    (M00_AXI_awvalid),
-        .M00_AXI_bready     (M00_AXI_bready),
-        .M00_AXI_bresp      (M00_AXI_bresp),
-        .M00_AXI_bvalid     (M00_AXI_bvalid),
-        .M00_AXI_rdata      (M00_AXI_rdata),
-        .M00_AXI_rready     (M00_AXI_rready),
-        .M00_AXI_rresp      (M00_AXI_rresp),
-        .M00_AXI_rvalid     (M00_AXI_rvalid),
-        .M00_AXI_wdata      (M00_AXI_wdata),
-        .M00_AXI_wready     (M00_AXI_wready),
-        .M00_AXI_wstrb      (M00_AXI_wstrb),
-        .M00_AXI_wvalid     (M00_AXI_wvalid)
+        .axi_aresetn        (axi_aresetn)
+        //
+        //.M00_AXI_araddr     (M00_AXI_araddr),
+        //.M00_AXI_arprot     (M00_AXI_arprot),
+        //.M00_AXI_arready    (M00_AXI_arready),
+        //.M00_AXI_arvalid    (M00_AXI_arvalid),
+        //.M00_AXI_awaddr     (M00_AXI_awaddr),
+        //.M00_AXI_awprot     (M00_AXI_awprot),
+        //.M00_AXI_awready    (M00_AXI_awready),
+        //.M00_AXI_awvalid    (M00_AXI_awvalid),
+        //.M00_AXI_bready     (M00_AXI_bready),
+        //.M00_AXI_bresp      (M00_AXI_bresp),
+        //.M00_AXI_bvalid     (M00_AXI_bvalid),
+        //.M00_AXI_rdata      (M00_AXI_rdata),
+        //.M00_AXI_rready     (M00_AXI_rready),
+        //.M00_AXI_rresp      (M00_AXI_rresp),
+        //.M00_AXI_rvalid     (M00_AXI_rvalid),
+        //.M00_AXI_wdata      (M00_AXI_wdata),
+        //.M00_AXI_wready     (M00_AXI_wready),
+        //.M00_AXI_wstrb      (M00_AXI_wstrb),
+        //.M00_AXI_wvalid     (M00_AXI_wvalid)
 );                
 //        //
 //        .qspi_io0_i         (qspi_io0_i),
@@ -135,6 +151,26 @@ module top (
 
     assign slv_read[Nregs-1:3] = slv_reg[Nregs-1:3];
 
+
+    mem_regfile #(
+       .Naddr(4)  // 16 registers
+    ) mem_regfile_inst (
+        .clk        (regfile_clk),
+        .addr       (regfile_addr[5:2]),
+        .wr_data    (regfile_din),
+        .rd_data    (regfile_dout),
+        .en         (regfile_en),
+        .reset      (regfile_rst),
+        .we         (regfile_we),
+        //
+        .reg_val    (slv_reg),
+        .pul_val    (),
+        .read_val   (slv_read)
+    );
+
+endmodule
+
+/*
     axi_regfile_v1_0_S00_AXI #  (
         .C_S_AXI_DATA_WIDTH(32),
         .C_S_AXI_ADDR_WIDTH(6) // 16 32-bit registers.
@@ -166,6 +202,6 @@ module top (
         .S_AXI_WSTRB   (M00_AXI_wstrb  ),
         .S_AXI_WVALID  (M00_AXI_wvalid )
     );    
+*/
 
-endmodule
 
