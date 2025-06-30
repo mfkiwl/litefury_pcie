@@ -24,7 +24,7 @@ int main(int argc,char** argv)
         if(base_addr == NULL) fprintf(stderr,"Can't mmap\n");
     }
 
-    uint32_t *bramptr = base_addr + VINSTRU_BRAM_OFFSET;
+    uint32_t *bramptr = base_addr + VINSTRU_RAM_OFFSET;
 
     for(uint32_t i=1; i<argc; i++) bramptr[i-1] = atoi(argv[i]);
 

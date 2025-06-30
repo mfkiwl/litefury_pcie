@@ -25,7 +25,7 @@ int main(int argc,char** argv)
         if(base_addr == NULL) fprintf(stderr,"Can't mmap\n");
     }
 
-    uint32_t *bramptr = base_addr + VINSTRU_BRAM_OFFSET;
+    uint32_t *bramptr = base_addr + VINSTRU_RAM_OFFSET;
 
     fprintf(stdout, "[{\n");
     fprintf(stdout, "\"series\": [\"A\"],\n");
@@ -51,5 +51,3 @@ int main(int argc,char** argv)
 }
 
 
-//#define     VINSTRU_BRAM_OFFSET      0x00040000
-//#define     VINSTRU_BRAM_SIZE        0x00004000 // 16k

@@ -7,7 +7,7 @@
 // register numbers
 #define     FPGA_ID                 0
 #define     FPGA_VERSION            1
-//#define     FPGA_LED                2 // [0] = PL LED value, read/write
+#define     FPGA_LED                2 // [3:0] = PL LED value, read/write
 
 #define     VINSTRU_PULSE_ENABLE    3 // [0] = pulse enable (rw), starts the pulse generator
 #define     VINSTRU_CAPTURE_CONTROL 4 // [0] = capture run (rw), [4] = capture done (ro), [8] = reset (rw), 
