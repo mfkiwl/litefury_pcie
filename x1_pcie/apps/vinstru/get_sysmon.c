@@ -25,31 +25,42 @@ float read_vccint()
     fgets(buffer, sizeof(buffer), pp);
     pclose(pp);
 
-    //printf("%s", buffer);
-
     char* token = strtok(buffer, " =");
     int whilecount = 0;
     while (token != NULL) {
-        //printf("%d: %s\n", whilecount, token);
         if (whilecount==2) strcpy(fltstr, token);
         token = strtok(NULL, "=V");
         whilecount++;
     }
-    //printf("%s\n", fltstr);
 
     char *endptr;
     float vccint = strtof(fltstr, &endptr);
     
-
-    //float vccint = 0.75;
     return(vccint);
 }
 
+
 float read_vccaux()
 {
-    float vccaux = 1.80;
-    return(vccaux);
+    FILE* pp = popen("vcgencmd pmic_read_adc | grep 1V8_SYS_V", "r");
+    char buffer[256], fltstr[256];
+    fgets(buffer, sizeof(buffer), pp);
+    pclose(pp);
+
+    char* token = strtok(buffer, " =");
+    int whilecount = 0;
+    while (token != NULL) {
+        if (whilecount==2) strcpy(fltstr, token);
+        token = strtok(NULL, "=V");
+        whilecount++;
+    }
+
+    char *endptr;
+    float vccint = strtof(fltstr, &endptr);
+    
+    return(vccint);
 }
+
 
 int main(int argc,char** argv)
 {
