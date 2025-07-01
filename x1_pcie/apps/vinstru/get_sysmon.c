@@ -8,45 +8,67 @@
 
 float read_temp()
 {
-    //FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_temp0_ps_temp_raw", "r");
-    FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_temp20_raw", "r");
+    FILE* fd_iio = fopen("/sys/class/thermal/thermal_zone0/temp", "r");
 
     char iio_str[256];
     fscanf(fd_iio, "%s", iio_str);
     fclose(fd_iio);
     int iio_int = atoi(iio_str);
-    //float temp = iio_int*503.975/4096.0 - 273.15;
-    float temp = iio_int*503.975/65536.0 - 273.15;
+    float temp = (float)iio_int/1000.0;
     return(temp);
 }
 
 float read_vccint()
 {
-    //FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_voltage2_vccint_raw", "r");
-    FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_voltage2_raw", "r");
+    FILE* pp = popen("vcgencmd pmic_read_adc | grep VDD_CORE_V", "r");
+    char buffer[256], fltstr[256];
+    fgets(buffer, sizeof(buffer), pp);
+    pclose(pp);
 
-    char iio_str[256];
-    fscanf(fd_iio, "%s", iio_str);
-    fclose(fd_iio);
-    int iio_int = atoi(iio_str);
-    float vccint = iio_int*3.0/65536.0;
+    char* token = strtok(buffer, " =");
+    int whilecount = 0;
+    while (token != NULL) {
+        if (whilecount==2) strcpy(fltstr, token);
+        token = strtok(NULL, "=V");
+        whilecount++;
+    }
+
+    char *endptr;
+    float vccint = strtof(fltstr, &endptr);
+    
     return(vccint);
 }
 
+
 float read_vccaux()
 {
-    //FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_voltage4_vccaux_raw", "r");
-    FILE* fd_iio = fopen("/sys/bus/iio/devices/iio:device0/in_voltage4_raw", "r");
-    char iio_str[256];
-    fscanf(fd_iio, "%s", iio_str);
-    fclose(fd_iio);
-    int iio_int = atoi(iio_str);
-    float vccaux = iio_int*3.0/65536.0;
-    return(vccaux);
+    FILE* pp = popen("vcgencmd pmic_read_adc | grep 1V8_SYS_V", "r");
+    char buffer[256], fltstr[256];
+    fgets(buffer, sizeof(buffer), pp);
+    pclose(pp);
+
+    char* token = strtok(buffer, " =");
+    int whilecount = 0;
+    while (token != NULL) {
+        if (whilecount==2) strcpy(fltstr, token);
+        token = strtok(NULL, "=V");
+        whilecount++;
+    }
+
+    char *endptr;
+    float vccint = strtof(fltstr, &endptr);
+    
+    return(vccint);
 }
+
 
 int main(int argc,char** argv)
 {
+
+    if (argc != 2) {
+        printf("Usage: ./get_sysmon [arg]\n\t arg: 1 = temperature, 2 = VccInt, 3 = VccAUX\n");
+        return 0;
+    }
 
     float temp = read_temp();
     float vccint = read_vccint();
@@ -60,4 +82,7 @@ int main(int argc,char** argv)
     return 0;
 }
 
+// vcgencmd pmic_read_adc | grep 1V8_SYS_V
+// vcgencmd pmic_read_adc | grep VDD_CORE_V
+// VDD_CORE_V volt(15)=0.75186740V
 

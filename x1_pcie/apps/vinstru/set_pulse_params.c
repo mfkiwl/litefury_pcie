@@ -20,13 +20,14 @@ int main(int argc,char** argv)
     int32_t pulse_amplitude = atoi(argv[3]);
     uint32_t noise_amplitude = atoi(argv[4]);
 
+    // get pointers to the FPGA logic.
+    char devstr[] = "/dev/xdma0_bypass";
     void* base_addr;
-
-    int fd = open("/dev/mem",O_RDWR|O_SYNC);
+    int fd = open(devstr, O_RDWR|O_SYNC);
     if(fd < 0) {
-        fprintf(stderr,"Can't open /dev/mem, you must be root!\n");
+        fprintf(stderr,"Can't open %s, you must be root!\n", devstr);
     } else {
-        base_addr=mmap(0,FPGA_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,fd,FPGA_BASE_ADDRESS);
+        base_addr = mmap(0,FPGA_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0);
         if(base_addr == NULL) fprintf(stderr,"Can't mmap\n");
     }
 

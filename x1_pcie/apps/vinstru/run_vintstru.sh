@@ -1,5 +1,5 @@
 #!/bin/sh
-./set_fpga_led 1 # turn on the PL LED
+./set_fpga_led 15 # turn on the PL LED
 ./get_fpga_version
 ./set_register 15 256
 ./get_register 15
