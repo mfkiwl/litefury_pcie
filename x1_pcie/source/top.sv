@@ -74,7 +74,7 @@ module top (
         end else begin
             led_count <= led_count + 1;
         end
-        led <= led_count[27:24];
+        //led <= led_count[27:24];
     end    
     assign ledn = ~led;
     
@@ -90,6 +90,7 @@ module top (
     assign slv_read[0] = 32'hdeadbeef;
     assign slv_read[1] = 32'h76543210;
     
+    assign led = slv_reg[2][3:0];
     assign slv_read[2] = slv_reg[2];
 
     assign vinstru_pulse_enable = slv_reg[3][0];
