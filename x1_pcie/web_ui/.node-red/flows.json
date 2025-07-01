@@ -172,7 +172,7 @@
         "animate": false,
         "className": "",
         "x": 350,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "5acdb7d152e4dced"
@@ -198,8 +198,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 590,
-        "y": 120,
+        "x": 610,
+        "y": 280,
         "wires": [
             []
         ]
@@ -223,8 +223,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 600,
-        "y": 240,
+        "x": 620,
+        "y": 400,
         "wires": [
             []
         ]
@@ -248,8 +248,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 600,
-        "y": 200,
+        "x": 620,
+        "y": 360,
         "wires": [
             []
         ]
@@ -273,8 +273,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 580,
-        "y": 160,
+        "x": 600,
+        "y": 320,
         "wires": [
             []
         ]
@@ -297,8 +297,8 @@
         "sendOnBlur": true,
         "className": "",
         "topicType": "msg",
-        "x": 350,
-        "y": 160,
+        "x": 370,
+        "y": 320,
         "wires": [
             [
                 "0505417cdfdd431b"
@@ -323,8 +323,8 @@
         "sendOnBlur": true,
         "className": "",
         "topicType": "msg",
-        "x": 360,
-        "y": 200,
+        "x": 380,
+        "y": 360,
         "wires": [
             [
                 "449ee8c662d8c161"
@@ -349,8 +349,8 @@
         "sendOnBlur": true,
         "className": "",
         "topicType": "msg",
-        "x": 360,
-        "y": 240,
+        "x": 380,
+        "y": 400,
         "wires": [
             [
                 "0863b6b10e5c3569"
@@ -370,8 +370,8 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 1000,
-        "y": 560,
+        "x": 1060,
+        "y": 800,
         "wires": []
     },
     {
@@ -412,8 +412,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 1010,
-        "y": 500,
+        "x": 1070,
+        "y": 740,
         "wires": [
             []
         ]
@@ -423,7 +423,7 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "ReadFPGAVersion",
-        "func": "var command_string;\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n\ncommand_string = command_path + \"get_fpga_version\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_fpga_version\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -431,7 +431,7 @@
         "finalize": "",
         "libs": [],
         "x": 590,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "6ac6a3edb321ba70"
@@ -456,7 +456,7 @@
         "fontSize": 16,
         "color": "#000000",
         "x": 940,
-        "y": 820,
+        "y": 980,
         "wires": []
     },
     {
@@ -472,7 +472,7 @@
         "oldrc": false,
         "name": "",
         "x": 770,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "cd518f45db1adc6e"
@@ -503,7 +503,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 380,
-        "y": 820,
+        "y": 980,
         "wires": [
             [
                 "c183691690642448",
@@ -521,8 +521,8 @@
         "property": "payload",
         "action": "",
         "pretty": false,
-        "x": 870,
-        "y": 500,
+        "x": 930,
+        "y": 740,
         "wires": [
             [
                 "9e797a3f10f7ffd2"
@@ -534,7 +534,7 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "function 5",
-        "func": "var command_string;\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n\nif (msg.payload) \n    command_string = command_path + \"set_fpga_led  15\" \nelse \n    command_string = command_path + \"set_fpga_led  0\" \n\nmsg.payload = command_string;\n\nreturn msg;",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n//var command_path = global.command_path;\nvar command_path = global.get(\"command_path\");\n\nif (msg.payload) \n    command_string = command_path + \"set_fpga_led  15\" \nelse \n    command_string = command_path + \"set_fpga_led  0\" \n\nmsg.payload = command_string;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -542,7 +542,7 @@
         "finalize": "",
         "libs": [],
         "x": 560,
-        "y": 760,
+        "y": 920,
         "wires": [
             [
                 "45e13727887a0c9e"
@@ -562,7 +562,7 @@
         "oldrc": false,
         "name": "",
         "x": 770,
-        "y": 760,
+        "y": 920,
         "wires": [
             [],
             [],
@@ -589,8 +589,8 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 340,
-        "y": 380,
+        "x": 400,
+        "y": 620,
         "wires": [
             [
                 "e5927108d25dda83"
@@ -602,15 +602,15 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "function 1",
-        "func": "var pulse_period;\nvar pulse_width;\nvar pulse_amplitude;\nvar noise_amplitude;\n\npulse_period = global.get(\"pulse_period\");\npulse_width = global.get(\"pulse_width\");\npulse_amplitude = global.get(\"pulse_amplitude\");\nnoise_amplitude = global.get(\"noise_amplitude\");\n\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_string;\n//command_string = \"/home/pedro/github/alinx/AXU2CG_full/apps/vinstru/set_pulse_params \";\ncommand_string = command_path + \"set_pulse_params \";\ncommand_string += pulse_period + \" \" + pulse_width + \" \" + pulse_amplitude + \" \" + noise_amplitude;\nmsg.payload = command_string;\n\nnode.send(msg);\n\nreturn;",
+        "func": "var pulse_period;\nvar pulse_width;\nvar pulse_amplitude;\nvar noise_amplitude;\n\npulse_period = global.get(\"pulse_period\");\npulse_width = global.get(\"pulse_width\");\npulse_amplitude = global.get(\"pulse_amplitude\");\nnoise_amplitude = global.get(\"noise_amplitude\");\n\nvar command_string;\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"set_pulse_params \";\ncommand_string += pulse_period + \" \" + pulse_width + \" \" + pulse_amplitude + \" \" + noise_amplitude;\nmsg.payload = command_string;\n\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
-        "y": 380,
+        "x": 620,
+        "y": 620,
         "wires": [
             [
                 "70577deb8518d09a"
@@ -622,15 +622,15 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "function 2",
-        "func": "var command_string;\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n\n\ncommand_string = command_path + \"enable_pulse\";\nmsg.payload = command_string;\nnode.send(msg);\n\ncommand_string = command_path + \"capture_waveform\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\n\ncommand_string = command_path + \"enable_pulse\";\nmsg.payload = command_string;\nnode.send(msg);\n\ncommand_string = command_path + \"capture_waveform\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
-        "y": 440,
+        "x": 620,
+        "y": 680,
         "wires": [
             [
                 "bb03f29db2bcc935"
@@ -642,15 +642,15 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "function 3",
-        "func": "\nvar record_length;\nrecord_length = global.get(\"record_length\");\n\nvar command_string;\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n\ncommand_string = command_path + \"bram2json \" + record_length;\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "func": "\nvar record_length;\nrecord_length = global.get(\"record_length\");\n\nvar command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\n\ncommand_string = command_path + \"bram2json \" + record_length;\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
-        "y": 500,
+        "x": 620,
+        "y": 740,
         "wires": [
             [
                 "e34626d78c6416bf"
@@ -669,8 +669,8 @@
         "winHide": false,
         "oldrc": false,
         "name": "",
-        "x": 730,
-        "y": 500,
+        "x": 790,
+        "y": 740,
         "wires": [
             [
                 "0615640816e6ed10"
@@ -691,8 +691,8 @@
         "winHide": false,
         "oldrc": false,
         "name": "",
-        "x": 730,
-        "y": 380,
+        "x": 790,
+        "y": 620,
         "wires": [
             [],
             [],
@@ -720,8 +720,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 590,
-        "y": 280,
+        "x": 610,
+        "y": 440,
         "wires": [
             []
         ]
@@ -744,8 +744,8 @@
         "sendOnBlur": true,
         "className": "",
         "topicType": "msg",
-        "x": 360,
-        "y": 280,
+        "x": 380,
+        "y": 440,
         "wires": [
             [
                 "ce9dc3de86296fd0"
@@ -757,7 +757,7 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "ReadFPGATemp",
-        "func": "var command_string;\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n\ncommand_string = command_path + \"get_sysmon 1\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_sysmon 1\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -765,7 +765,7 @@
         "finalize": "",
         "libs": [],
         "x": 590,
-        "y": 900,
+        "y": 1060,
         "wires": [
             [
                 "04b16e6b23ab8110"
@@ -781,7 +781,7 @@
         "width": 0,
         "height": 0,
         "name": "",
-        "label": "FPGA Temp",
+        "label": "CPU Temp",
         "format": "{{msg.payload}}",
         "layout": "col-center",
         "className": "",
@@ -790,7 +790,7 @@
         "fontSize": 16,
         "color": "#000000",
         "x": 930,
-        "y": 900,
+        "y": 1060,
         "wires": []
     },
     {
@@ -806,7 +806,7 @@
         "oldrc": false,
         "name": "",
         "x": 770,
-        "y": 900,
+        "y": 1060,
         "wires": [
             [
                 "d7383cb4f801dd04"
@@ -820,7 +820,7 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "ReadFPGAVCCInt",
-        "func": "var command_string;\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n\ncommand_string = command_path + \"get_sysmon 2\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_sysmon 2\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -828,7 +828,7 @@
         "finalize": "",
         "libs": [],
         "x": 590,
-        "y": 960,
+        "y": 1120,
         "wires": [
             [
                 "548532faaf4a1bd3"
@@ -844,7 +844,7 @@
         "width": 0,
         "height": 0,
         "name": "",
-        "label": "FPGA VCCInt",
+        "label": "CPU VccInt",
         "format": "{{msg.payload}}",
         "layout": "col-center",
         "className": "",
@@ -852,8 +852,8 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 940,
-        "y": 960,
+        "x": 930,
+        "y": 1120,
         "wires": []
     },
     {
@@ -869,7 +869,7 @@
         "oldrc": false,
         "name": "",
         "x": 770,
-        "y": 960,
+        "y": 1120,
         "wires": [
             [
                 "9e0b81834b6c7584"
@@ -883,7 +883,7 @@
         "type": "function",
         "z": "20c48bf776b506fa",
         "name": "ReadFPGAVCCAux",
-        "func": "var command_string;\nvar command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\n\ncommand_string = command_path + \"get_sysmon 3\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_sysmon 3\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -891,7 +891,7 @@
         "finalize": "",
         "libs": [],
         "x": 600,
-        "y": 1020,
+        "y": 1180,
         "wires": [
             [
                 "5203719b0b3e0586"
@@ -907,7 +907,7 @@
         "width": 0,
         "height": 0,
         "name": "",
-        "label": "FPGA VCCAux",
+        "label": "CPU VccAux",
         "format": "{{msg.payload}}",
         "layout": "col-center",
         "className": "",
@@ -915,8 +915,8 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 940,
-        "y": 1020,
+        "x": 930,
+        "y": 1180,
         "wires": []
     },
     {
@@ -932,7 +932,7 @@
         "oldrc": false,
         "name": "",
         "x": 770,
-        "y": 1020,
+        "y": 1180,
         "wires": [
             [
                 "aeeecca802cbf4e8"
@@ -962,7 +962,7 @@
         "topic": "topic",
         "topicType": "msg",
         "x": 360,
-        "y": 1020,
+        "y": 1180,
         "wires": [
             [
                 "0e7ddb079e181e97",
@@ -990,8 +990,8 @@
         "sendOnBlur": true,
         "className": "",
         "topicType": "msg",
-        "x": 350,
-        "y": 120,
+        "x": 370,
+        "y": 280,
         "wires": [
             [
                 "1c7933a03658498b"
@@ -1024,8 +1024,8 @@
         "offcolor": "",
         "animate": true,
         "className": "",
-        "x": 330,
-        "y": 500,
+        "x": 390,
+        "y": 740,
         "wires": [
             [
                 "07f83845e21d0e0e"
@@ -1044,8 +1044,8 @@
         "winHide": false,
         "oldrc": false,
         "name": "",
-        "x": 730,
-        "y": 440,
+        "x": 790,
+        "y": 680,
         "wires": [
             [],
             [],
@@ -1061,7 +1061,7 @@
         "name": "FPGA Status",
         "info": "",
         "x": 250,
-        "y": 700,
+        "y": 860,
         "wires": []
     },
     {
@@ -1070,8 +1070,8 @@
         "z": "20c48bf776b506fa",
         "name": "Waveform Parameters",
         "info": "",
-        "x": 280,
-        "y": 40,
+        "x": 300,
+        "y": 200,
         "wires": []
     },
     {
@@ -1080,8 +1080,8 @@
         "z": "20c48bf776b506fa",
         "name": "Waveform Update",
         "info": "",
-        "x": 250,
-        "y": 340,
+        "x": 310,
+        "y": 580,
         "wires": []
     },
     {
@@ -1101,11 +1101,75 @@
         "bytopic": "all",
         "topic": "topic",
         "outputs": 1,
-        "x": 360,
-        "y": 440,
+        "x": 420,
+        "y": 680,
         "wires": [
             [
                 "e5927108d25dda83"
+            ]
+        ]
+    },
+    {
+        "id": "43eeff1d5fc69e57",
+        "type": "change",
+        "z": "20c48bf776b506fa",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "command_path",
+                "pt": "global",
+                "to": "\"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\"",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 610,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "353c71d73ff85d8a",
+        "type": "comment",
+        "z": "20c48bf776b506fa",
+        "name": "constants",
+        "info": "",
+        "x": 280,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "7b578c2df028c1f8",
+        "type": "inject",
+        "z": "20c48bf776b506fa",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.0",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 390,
+        "y": 100,
+        "wires": [
+            [
+                "43eeff1d5fc69e57"
             ]
         ]
     }
