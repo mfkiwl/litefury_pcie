@@ -126,7 +126,7 @@
     {
         "id": "3854a4487d777d7b",
         "type": "ui_group",
-        "name": "Status",
+        "name": "CPU Status",
         "tab": "5d8a091031102694",
         "order": 3,
         "disp": true,
@@ -146,6 +146,17 @@
         "className": ""
     },
     {
+        "id": "d72205edba054996",
+        "type": "ui_group",
+        "name": "FPGA Status",
+        "tab": "5d8a091031102694",
+        "order": 4,
+        "disp": true,
+        "width": "4",
+        "collapse": false,
+        "className": ""
+    },
+    {
         "id": "82129ea82e00f69f",
         "type": "ui_switch",
         "z": "20c48bf776b506fa",
@@ -153,7 +164,7 @@
         "label": "LED",
         "tooltip": "Turn LED on or off",
         "group": "3854a4487d777d7b",
-        "order": 6,
+        "order": 4,
         "width": "3",
         "height": "3",
         "passthru": true,
@@ -430,8 +441,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 590,
-        "y": 980,
+        "x": 570,
+        "y": 1340,
         "wires": [
             [
                 "6ac6a3edb321ba70"
@@ -442,7 +453,7 @@
         "id": "cd518f45db1adc6e",
         "type": "ui_text",
         "z": "20c48bf776b506fa",
-        "group": "3854a4487d777d7b",
+        "group": "d72205edba054996",
         "order": 1,
         "width": 0,
         "height": 0,
@@ -455,8 +466,8 @@
         "font": "",
         "fontSize": 16,
         "color": "#000000",
-        "x": 940,
-        "y": 980,
+        "x": 920,
+        "y": 1340,
         "wires": []
     },
     {
@@ -471,8 +482,8 @@
         "winHide": false,
         "oldrc": false,
         "name": "",
-        "x": 770,
-        "y": 980,
+        "x": 750,
+        "y": 1340,
         "wires": [
             [
                 "cd518f45db1adc6e"
@@ -498,18 +509,22 @@
         "repeat": "",
         "crontab": "",
         "once": true,
-        "onceDelay": "0",
+        "onceDelay": "0.1",
         "topic": "none",
         "payload": "",
         "payloadType": "date",
-        "x": 380,
-        "y": 980,
+        "x": 340,
+        "y": 1060,
         "wires": [
             [
                 "c183691690642448",
                 "0e7ddb079e181e97",
                 "cc29101d8473fae4",
-                "053f3e32a3e64339"
+                "053f3e32a3e64339",
+                "e897b67c2310cec6",
+                "b04ddb1a399c2d32",
+                "dc1203afbc71407a",
+                "7afbd5ce535878c5"
             ]
         ]
     },
@@ -756,7 +771,7 @@
         "id": "0e7ddb079e181e97",
         "type": "function",
         "z": "20c48bf776b506fa",
-        "name": "ReadFPGATemp",
+        "name": "ReadCPUTemp",
         "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_sysmon 1\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
@@ -764,7 +779,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 590,
+        "x": 580,
         "y": 1060,
         "wires": [
             [
@@ -777,7 +792,7 @@
         "type": "ui_text",
         "z": "20c48bf776b506fa",
         "group": "3854a4487d777d7b",
-        "order": 2,
+        "order": 1,
         "width": 0,
         "height": 0,
         "name": "",
@@ -819,7 +834,7 @@
         "id": "cc29101d8473fae4",
         "type": "function",
         "z": "20c48bf776b506fa",
-        "name": "ReadFPGAVCCInt",
+        "name": "ReadCPUVCCInt",
         "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_sysmon 2\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
@@ -840,7 +855,7 @@
         "type": "ui_text",
         "z": "20c48bf776b506fa",
         "group": "3854a4487d777d7b",
-        "order": 3,
+        "order": 2,
         "width": 0,
         "height": 0,
         "name": "",
@@ -882,7 +897,7 @@
         "id": "053f3e32a3e64339",
         "type": "function",
         "z": "20c48bf776b506fa",
-        "name": "ReadFPGAVCCAux",
+        "name": "ReadCPUVCCAux",
         "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_sysmon 3\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
         "outputs": 1,
         "timeout": 0,
@@ -890,7 +905,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 600,
+        "x": 590,
         "y": 1180,
         "wires": [
             [
@@ -903,7 +918,7 @@
         "type": "ui_text",
         "z": "20c48bf776b506fa",
         "group": "3854a4487d777d7b",
-        "order": 4,
+        "order": 3,
         "width": 0,
         "height": 0,
         "name": "",
@@ -961,14 +976,18 @@
         "payloadType": "str",
         "topic": "topic",
         "topicType": "msg",
-        "x": 360,
+        "x": 340,
         "y": 1180,
         "wires": [
             [
                 "0e7ddb079e181e97",
                 "cc29101d8473fae4",
                 "053f3e32a3e64339",
-                "c183691690642448"
+                "c183691690642448",
+                "e897b67c2310cec6",
+                "b04ddb1a399c2d32",
+                "dc1203afbc71407a",
+                "7afbd5ce535878c5"
             ]
         ]
     },
@@ -1058,7 +1077,7 @@
         "id": "3b50e25ce632b816",
         "type": "comment",
         "z": "20c48bf776b506fa",
-        "name": "FPGA Status",
+        "name": "CPU Status",
         "info": "",
         "x": 250,
         "y": 860,
@@ -1171,6 +1190,268 @@
             [
                 "43eeff1d5fc69e57"
             ]
+        ]
+    },
+    {
+        "id": "e897b67c2310cec6",
+        "type": "function",
+        "z": "20c48bf776b506fa",
+        "name": "ReadFPGATemp",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_xadc 1\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 1400,
+        "wires": [
+            [
+                "dda0bace7fe56ac1"
+            ]
+        ]
+    },
+    {
+        "id": "246fb6f8745e644c",
+        "type": "ui_text",
+        "z": "20c48bf776b506fa",
+        "group": "d72205edba054996",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "FPGA Temp",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 910,
+        "y": 1400,
+        "wires": []
+    },
+    {
+        "id": "dda0bace7fe56ac1",
+        "type": "exec",
+        "z": "20c48bf776b506fa",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 750,
+        "y": 1400,
+        "wires": [
+            [
+                "246fb6f8745e644c"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "b04ddb1a399c2d32",
+        "type": "function",
+        "z": "20c48bf776b506fa",
+        "name": "ReadFPGAVCCInt",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_xadc 2\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 1460,
+        "wires": [
+            [
+                "a19280289d20ca8e"
+            ]
+        ]
+    },
+    {
+        "id": "aa6679d703dd34d5",
+        "type": "ui_text",
+        "z": "20c48bf776b506fa",
+        "group": "d72205edba054996",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "FPGA VccInt",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 910,
+        "y": 1460,
+        "wires": []
+    },
+    {
+        "id": "a19280289d20ca8e",
+        "type": "exec",
+        "z": "20c48bf776b506fa",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 750,
+        "y": 1460,
+        "wires": [
+            [
+                "aa6679d703dd34d5"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "dc1203afbc71407a",
+        "type": "function",
+        "z": "20c48bf776b506fa",
+        "name": "ReadFPGAVCCAux",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_xadc 3\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1520,
+        "wires": [
+            [
+                "1a5bc4f709118bf4"
+            ]
+        ]
+    },
+    {
+        "id": "e68d794c9bee8854",
+        "type": "ui_text",
+        "z": "20c48bf776b506fa",
+        "group": "d72205edba054996",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "FPGA VccAux",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 920,
+        "y": 1520,
+        "wires": []
+    },
+    {
+        "id": "1a5bc4f709118bf4",
+        "type": "exec",
+        "z": "20c48bf776b506fa",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 750,
+        "y": 1520,
+        "wires": [
+            [
+                "e68d794c9bee8854"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "8ef8c0385d1183c9",
+        "type": "comment",
+        "z": "20c48bf776b506fa",
+        "name": "FPGA Status",
+        "info": "",
+        "x": 270,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "7afbd5ce535878c5",
+        "type": "function",
+        "z": "20c48bf776b506fa",
+        "name": "ReadFPGAVCCbram",
+        "func": "var command_string;\n//var command_path = \"/home/pedro/github/litefury_pcie/x1_pcie/apps/vinstru/\";\nvar command_path = global.get(\"command_path\");\n\ncommand_string = command_path + \"get_xadc 4\";\nmsg.payload = command_string;\nnode.send(msg);\n\nreturn;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1580,
+        "wires": [
+            [
+                "601b23690b7c61eb"
+            ]
+        ]
+    },
+    {
+        "id": "b9f482087f31466c",
+        "type": "ui_text",
+        "z": "20c48bf776b506fa",
+        "group": "d72205edba054996",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "FPGA VccBram",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 920,
+        "y": 1580,
+        "wires": []
+    },
+    {
+        "id": "601b23690b7c61eb",
+        "type": "exec",
+        "z": "20c48bf776b506fa",
+        "command": "",
+        "addpay": "payload",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 750,
+        "y": 1580,
+        "wires": [
+            [
+                "b9f482087f31466c"
+            ],
+            [],
+            []
         ]
     }
 ]

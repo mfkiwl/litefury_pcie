@@ -15,9 +15,9 @@ When the .node-red folder is first checked out it is missing some of the dashboa
     $ node-red
 
 ## Access
-The flow workspace is accessed here: http://alinx.attlocal.net:1880/
+The flow workspace is accessed here: http://rpicm5.attlocal.net:1880/
 
-The deployed webpage is accessed here: http://alinx.attlocal.net:1880/ui
+The deployed webpage is accessed here: http://rpicm5.attlocal.net:1880/ui
 
 Change the machine name to match your network.
 
