@@ -25,4 +25,11 @@
 #define     VINSTRU_RAM_OFFSET      0x00020000
 #define     VINSTRU_RAM_SIZE        0x00004000 // 16KB = 4K 32-bit words
 
+// XADC for temperature and voltage monitoring in the FPGA
+#define     XADC_OFFSET             0x00030000
+// XADC register offsets
+#define     XADC_TEMP               0x200
+#define     XADC_VCCINT             0x204
+#define     XADC_VCCAUX             0x208
+#define     XADC_VBRAM              0x218
 
