@@ -20,5 +20,6 @@ I installed the LiteFury onto a very inexpensive four lane PCIe to M.2 adapter t
 
     lspci
 
-I also tried a one lane PCIe to M.2 adapter to test with the Raspberry Pi Compute Module 4 IO Board.
+I also tried a one lane PCIe on the Raspberry Pi Compute Module 5 IO Board. This works well and is something like a low-cost ZynqMP.
+<img src="IMG_20250805_120206312_MP.jpg">
 
