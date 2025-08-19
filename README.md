@@ -22,7 +22,7 @@ I also tried a one lane PCIe on the Raspberry Pi Compute Module 5 IO Board. This
 <img src="IMG_20250805_120206312_MP.jpg">
 
 The Xilinx PCIe core provies two address regions. The 64KB region is for DMA access. The 1MB region allows random access to the whole address space.
-
+```
 $ lspci -v -s 01:01:00
 0001:01:00.0 RAM memory: Xilinx Corporation Device 7021
 	Subsystem: Xilinx Corporation Device 0007
@@ -32,5 +32,5 @@ $ lspci -v -s 01:01:00
 	Capabilities: <access denied>
 	Kernel driver in use: xdma
 	Kernel modules: xdma
-
+```
 
