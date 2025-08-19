@@ -18,8 +18,19 @@ The PCIe lanes are wired in a non-standard way on this board. TCL reset_property
 I installed the LiteFury onto a very inexpensive four lane PCIe to M.2 adapter to facilitate removal and replacement. The board functions correctly that way.
 <img src="IMG_20240207_075841590.jpg">
 
-    lspci
-
 I also tried a one lane PCIe on the Raspberry Pi Compute Module 5 IO Board. This works well and is something like a low-cost ZynqMP.
 <img src="IMG_20250805_120206312_MP.jpg">
+
+The Xilinx PCIe core provies two address regions. The 64KB region is for DMA access. The 1MB region allows random access to the whole address space.
+
+$ lspci -v -s 01:01:00
+0001:01:00.0 RAM memory: Xilinx Corporation Device 7021
+	Subsystem: Xilinx Corporation Device 0007
+	Flags: bus master, fast devsel, latency 0, IRQ 39
+	Memory at 1b80100000 (32-bit, non-prefetchable) [size=64K]
+	Memory at 1b80000000 (32-bit, non-prefetchable) [size=1M]
+	Capabilities: <access denied>
+	Kernel driver in use: xdma
+	Kernel modules: xdma
+
 
