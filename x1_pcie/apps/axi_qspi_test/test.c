@@ -6,10 +6,9 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <time.h>
-
 #include "fpga.h"
 
-int ram_test(uint32_t* offset, uint32_t size);
+void print_qspi_regs(uint32_t* qspi_ptr);
 
 int main(int argc,char** argv)
 {
@@ -24,12 +23,28 @@ int main(int argc,char** argv)
         base_addr = mmap(0,FPGA_SIZE,PROT_READ|PROT_WRITE,MAP_SHARED,fd,0);
         if(base_addr == NULL) fprintf(stderr,"Can't mmap\n");
     }
+
     uint32_t *reg_ptr  = base_addr + FPGA_REG_OFFSET;
     printf("FPGA_ID = 0x%08x, FPGA_VERSION = 0x%08x\n", reg_ptr[FPGA_ID], reg_ptr[FPGA_VERSION]);
 
     // access some AXI QSPI registers
     uint32_t * qspi_ptr = base_addr + QSPI_OFFSET;
 
+    // reset the AXI QSPI interface
+    qspi_ptr[QSPI_SRR/4] = 0x0000000a;
+
+    // configure the AXI QSPI
+    //qspi_ptr[QSPI_SPICR/4] = 0x00000066;
+    qspi_ptr[QSPI_SPICR/4] = QSPI_SPICR_RX_FIFO_RESET | QSPI_SPICR_TX_FIFO_RESET | QSPI_SPICR_MASTER_ENABLE | QSPI_SPICR_SPI_ENABLE;
+
+    print_qspi_regs(qspi_ptr);
+
+    munmap(base_addr,FPGA_SIZE);
+
+    return 0;
+}
+
+void print_qspi_regs(uint32_t* qspi_ptr) {
     printf("QSPI_SRR = 0x%08x\n", qspi_ptr[QSPI_SRR/4]);
     printf("QSPI_SPICR = 0x%08x\n", qspi_ptr[QSPI_SPICR/4]);
     printf("QSPI_SPISR = 0x%08x\n", qspi_ptr[QSPI_SPISR/4]);
@@ -40,11 +55,6 @@ int main(int argc,char** argv)
     printf("QSPI_DGIER = 0x%08x\n", qspi_ptr[QSPI_DGIER/4]);
     printf("QSPI_IPISR = 0x%08x\n", qspi_ptr[QSPI_IPISR/4]);
     printf("QSPI_IPEIR = 0x%08x\n", qspi_ptr[QSPI_IPEIR/4]);
-
-
-    munmap(base_addr,FPGA_SIZE);
-
-    return 0;
 }
 
 /*

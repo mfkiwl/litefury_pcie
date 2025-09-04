@@ -33,7 +33,7 @@
 #define     XADC_VCCAUX             0x208
 #define     XADC_VBRAM              0x218
 
-// QSPI Configuration Flash
+// AXI QSPI Controller connected to configuration flash
 #define     QSPI_OFFSET             0x00040000
 
 #define     QSPI_SRR                0x40    // 40h SRR Write N/A Software reset register
@@ -47,4 +47,16 @@
 #define     QSPI_DGIER              0x1C    // 1Ch DGIER R/W 0x0 Device global interrupt enable register
 #define     QSPI_IPISR              0x20    // 20h IPISR R/TOW(3) 0x0 IP interrupt status register
 #define     QSPI_IPEIR              0x28    // 28h IPIER R/W 0x0 IP interrupt enable register
+
+// SRR mask bits
+#define     QSPI_SPICR_LOOPBACK       0x001
+#define     QSPI_SPICR_SPI_ENABLE     0x002
+#define     QSPI_SPICR_MASTER_ENABLE  0x004
+#define     QSPI_SPICR_CPOL           0x008
+#define     QSPI_SPICR_CPHA           0x010
+#define     QSPI_SPICR_TX_FIFO_RESET  0x020
+#define     QSPI_SPICR_RX_FIFO_RESET  0x040
+#define     QSPI_SPICR_MANUAL_SS      0x080
+#define     QSPI_SPICR_MASTER_INHIBIT 0x100
+#define     QSPI_SPICR_LSB_FIRST      0x200
 
