@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "fpga.h"
 
@@ -69,6 +70,7 @@ int main(int argc,char** argv)
     free(write_data);
     free(read_data);
 
+    reg_ptr[FPGA_LED] += 2;
 
     munmap(base_addr,FPGA_SIZE);
 
