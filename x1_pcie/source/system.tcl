@@ -135,7 +135,6 @@ xilinx.com:ip:blk_mem_gen:8.4\
 xilinx.com:ip:axi_bram_ctrl:4.1\
 xilinx.com:ip:smartconnect:1.0\
 xilinx.com:ip:xlconcat:2.1\
-xilinx.com:ip:system_ila:1.1\
 xilinx.com:ip:xadc_wiz:3.3\
 xilinx.com:ip:axi_quad_spi:3.2\
 "
@@ -222,6 +221,8 @@ proc create_root_design { parentCell } {
 
   set qspi [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:spi_rtl:1.0 qspi ]
 
+  set startup [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_startup_io:startup_io_rtl:1.0 startup ]
+
 
   # Create ports
   set pcie_reset [ create_bd_port -dir I -type rst pcie_reset ]
@@ -281,14 +282,6 @@ proc create_root_design { parentCell } {
   set_property CONFIG.NUM_PORTS {2} $xlconcat_0
 
 
-  # Create instance: system_ila_0, and set properties
-  set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
-  set_property -dict [list \
-    CONFIG.C_DATA_DEPTH {2048} \
-    CONFIG.C_NUM_MONITOR_SLOTS {2} \
-  ] $system_ila_0
-
-
   # Create instance: axi_bram_ctrl_1, and set properties
   set axi_bram_ctrl_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.1 axi_bram_ctrl_1 ]
   set_property CONFIG.SINGLE_PORT_BRAM {1} $axi_bram_ctrl_1
@@ -338,6 +331,7 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net axi_bram_ctrl_1_BRAM_PORTA [get_bd_intf_ports regfile] [get_bd_intf_pins axi_bram_ctrl_1/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_bram_ctrl_2_BRAM_PORTA [get_bd_intf_ports vinstru_bram] [get_bd_intf_pins axi_bram_ctrl_2/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_quad_spi_0_SPI_0 [get_bd_intf_ports qspi] [get_bd_intf_pins axi_quad_spi_0/SPI_0]
+  connect_bd_intf_net -intf_net axi_quad_spi_0_STARTUP_IO [get_bd_intf_ports startup] [get_bd_intf_pins axi_quad_spi_0/STARTUP_IO]
   connect_bd_intf_net -intf_net axi_smc_M00_AXI [get_bd_intf_pins axi_bram_ctrl_1/S_AXI] [get_bd_intf_pins axi_smc/M00_AXI]
   connect_bd_intf_net -intf_net axi_smc_M01_AXI [get_bd_intf_pins axi_bram_ctrl_0/S_AXI] [get_bd_intf_pins axi_smc/M01_AXI]
   connect_bd_intf_net -intf_net axi_smc_M02_AXI [get_bd_intf_pins axi_bram_ctrl_2/S_AXI] [get_bd_intf_pins axi_smc/M02_AXI]
@@ -345,9 +339,7 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net axi_smc_M04_AXI [get_bd_intf_pins axi_smc/M04_AXI] [get_bd_intf_pins axi_quad_spi_0/AXI_LITE]
   connect_bd_intf_net -intf_net diff_clock_rtl_0_1 [get_bd_intf_ports pcie_clkin] [get_bd_intf_pins util_ds_buf/CLK_IN_D]
   connect_bd_intf_net -intf_net xdma_0_M_AXI [get_bd_intf_pins xdma_0/M_AXI] [get_bd_intf_pins axi_smc/S00_AXI]
-connect_bd_intf_net -intf_net [get_bd_intf_nets xdma_0_M_AXI] [get_bd_intf_pins xdma_0/M_AXI] [get_bd_intf_pins system_ila_0/SLOT_1_AXI]
   connect_bd_intf_net -intf_net xdma_0_M_AXI_LITE [get_bd_intf_pins axi_smc/S01_AXI] [get_bd_intf_pins xdma_0/M_AXI_BYPASS]
-connect_bd_intf_net -intf_net [get_bd_intf_nets xdma_0_M_AXI_LITE] [get_bd_intf_pins axi_smc/S01_AXI] [get_bd_intf_pins system_ila_0/SLOT_0_AXI]
   connect_bd_intf_net -intf_net xdma_0_pcie_mgt [get_bd_intf_ports pcie_mgt] [get_bd_intf_pins xdma_0/pcie_mgt]
 
   # Create port connections
@@ -363,7 +355,6 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets xdma_0_M_AXI_LITE] [get_bd_intf_
   [get_bd_pins axi_smc/aclk] \
   [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] \
   [get_bd_ports axi_aclk] \
-  [get_bd_pins system_ila_0/clk] \
   [get_bd_pins axi_bram_ctrl_1/s_axi_aclk] \
   [get_bd_pins axi_bram_ctrl_2/s_axi_aclk] \
   [get_bd_pins xadc_wiz_0/s_axi_aclk] \
@@ -373,7 +364,6 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets xdma_0_M_AXI_LITE] [get_bd_intf_
   [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] \
   [get_bd_pins axi_smc/aresetn] \
   [get_bd_ports axi_aresetn] \
-  [get_bd_pins system_ila_0/resetn] \
   [get_bd_pins axi_bram_ctrl_1/s_axi_aresetn] \
   [get_bd_pins axi_bram_ctrl_2/s_axi_aresetn] \
   [get_bd_pins xadc_wiz_0/s_axi_aresetn] \

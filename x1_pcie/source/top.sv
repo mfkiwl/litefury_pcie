@@ -35,12 +35,10 @@ module top (
     logic           vinstru_bram_rst;
     logic [3:0]     vinstru_bram_we;    
     
-    logic qspi_io0_i, qspi_io0_o, qspi_io0_t; 
-    logic qspi_io1_i, qspi_io1_o, qspi_io1_t;
-    logic qspi_io2_i, qspi_io2_o, qspi_io2_t; 
-    logic qspi_io3_i, qspi_io3_o, qspi_io3_t;
-    logic[0:0] qspi_ss_i_0, qspi_ss_o_0;
-    logic qspi_ss_t;    
+    logic[3:0] qspi_io_i, qspi_io_o, qspi_io_t; 
+    logic qspi_ss_i, qspi_ss_o, qspi_ss_t;       
+
+    logic startup_cfgclk, startup_cfgmclk, startup_eos, startup_preq;     
 
     system system_i(
         .pcie_clkin_clk_n   (pcie_clkin_clk_n),
@@ -70,12 +68,17 @@ module top (
         .vinstru_bram_rst   (vinstru_bram_rst),
         .vinstru_bram_we    (vinstru_bram_we),
         // 
-        .qspi_io0_i(qspi_io0_i), .qspi_io0_o(qspi_io0_o), .qspi_io0_t(qspi_io0_t),
-        .qspi_io1_i(qspi_io1_i), .qspi_io1_o(qspi_io1_o), .qspi_io1_t(qspi_io1_t),
-        .qspi_io2_i(qspi_io2_i), .qspi_io2_o(qspi_io2_o), .qspi_io2_t(qspi_io2_t),
-        .qspi_io3_i(qspi_io3_i), .qspi_io3_o(qspi_io3_o), .qspi_io3_t(qspi_io3_t),
-        .qspi_ss_i(qspi_ss_i),   .qspi_ss_o(qspi_ss_o),   .qspi_ss_t(qspi_ss_t)                        
-);
+        .qspi_io0_i(qspi_io_i[0]), .qspi_io0_o(qspi_io_o[0]), .qspi_io0_t(qspi_io_t[0]),
+        .qspi_io1_i(qspi_io_i[1]), .qspi_io1_o(qspi_io_o[1]), .qspi_io1_t(qspi_io_t[1]),
+        .qspi_io2_i(qspi_io_i[2]), .qspi_io2_o(qspi_io_o[2]), .qspi_io2_t(qspi_io_t[2]),
+        .qspi_io3_i(qspi_io_i[3]), .qspi_io3_o(qspi_io_o[3]), .qspi_io3_t(qspi_io_t[3]),
+        .qspi_ss_i(qspi_ss_i),     .qspi_ss_o(qspi_ss_o),     .qspi_ss_t(qspi_ss_t),
+        //
+        .startup_cfgclk     (startup_cfgclk),
+        .startup_cfgmclk    (startup_cfgmclk),
+        .startup_eos        (startup_eos),
+        .startup_preq       (startup_preq)                                
+    );
 
     IOBUF qspi_io0_iobuf (.I(qspi_io0_o), .IO(qspi_data[0]), .O(qspi_io0_i), .T(qspi_io0_t));
     IOBUF qspi_io1_iobuf (.I(qspi_io1_o), .IO(qspi_data[1]), .O(qspi_io1_i), .T(qspi_io1_t));
@@ -181,6 +184,9 @@ module top (
         .bram_din           (vinstru_bram_din),
         .bram_dout          (vinstru_bram_dout)
     );
+    
+    // debug
+    top_ila top_ila_inst(.clk(axi_aclk), .probe0({qspi_io_i, qspi_io_o, qspi_io_t, qspi_ss_i, qspi_ss_o, qspi_ss_t, startup_cfgclk})); //16
 
 endmodule
 
