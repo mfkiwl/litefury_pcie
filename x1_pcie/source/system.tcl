@@ -238,7 +238,7 @@ proc create_root_design { parentCell } {
     CONFIG.axi_data_width {64_bit} \
     CONFIG.axilite_master_en {false} \
     CONFIG.axist_bypass_en {true} \
-    CONFIG.axisten_freq {125} \
+    CONFIG.axisten_freq {62.5} \
     CONFIG.cfg_mgmt_if {false} \
     CONFIG.pf0_base_class_menu {Memory_controller} \
     CONFIG.pf0_msi_enabled {false} \
