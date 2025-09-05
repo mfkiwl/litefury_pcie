@@ -1,17 +1,21 @@
-// This program just demonstrates access to the AXI QSPI interface accross PCIe.
+// This program just demonstrates polled access to the AXI QSPI interface accross PCIe.
 
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <time.h>
 #include "fpga.h"
 
+void spi_transfer(uint32_t* qspi_ptr, uint8_t* txbuf, uint8_t* rxbuf, int nx);
 void print_qspi_regs(uint32_t* qspi_ptr);
 
 int main(int argc,char** argv)
 {
+    uint8_t txbuf[512], rxbuf[512];
+
     char devstr[] = "/dev/xdma0_bypass";
 
     // get pointer to the FPGA logic.
@@ -31,25 +35,85 @@ int main(int argc,char** argv)
     uint32_t * qspi_ptr = base_addr + QSPI_OFFSET;
 
     // reset the AXI QSPI interface
+    qspi_ptr[QSPI_SSR/4] = 0xff;
     qspi_ptr[QSPI_SRR/4] = 0x0000000a;
 
     // configure the AXI QSPI
-    //qspi_ptr[QSPI_SPICR/4] = 0x00000066;
-    qspi_ptr[QSPI_SPICR/4] = QSPI_SPICR_RX_FIFO_RESET | QSPI_SPICR_TX_FIFO_RESET | QSPI_SPICR_MASTER_ENABLE | QSPI_SPICR_SPI_ENABLE;
+    qspi_ptr[QSPI_CR/4] = QSPI_SPICR_MANUAL_SS | QSPI_SPICR_MASTER_INHIBIT | QSPI_SPICR_RX_FIFO_RESET | QSPI_SPICR_TX_FIFO_RESET | QSPI_SPICR_MASTER_ENABLE | QSPI_SPICR_SPI_ENABLE;
+    qspi_ptr[QSPI_SSR/4] = 0xff;
 
     print_qspi_regs(qspi_ptr);
+
+    // try to read the JEDEC ID
+    for (int i=0; i<5; i++) {
+        txbuf[i] = 0;
+        rxbuf[i] = 0;
+    }
+    txbuf[0] = 0x9f;
+    spi_transfer(qspi_ptr, txbuf, rxbuf, 5);
+    for (int i=0; i<5; i++) printf("%02x ", rxbuf[i]);
+    printf("\n");
+
 
     munmap(base_addr,FPGA_SIZE);
 
     return 0;
 }
 
+void spi_transfer(uint32_t* qspi_ptr, uint8_t* txbuf, uint8_t* rxbuf, int nx){
+    // 1. Disable the master transaction by asserting the master inhibit bit of SPICR (60h), and reset the RX and TX FIFOs through SPICR.  Example: write 0x1E6 to SPICR
+    printf("asserting master inhibit\n");
+    qspi_ptr[QSPI_CR/4] = QSPI_SPICR_MANUAL_SS | QSPI_SPICR_MASTER_INHIBIT | QSPI_SPICR_RX_FIFO_RESET | QSPI_SPICR_TX_FIFO_RESET | QSPI_SPICR_MASTER_ENABLE | QSPI_SPICR_SPI_ENABLE;
+
+    // 2. Write data into DTR.
+    printf("writing to DTR\n");
+    for (int i=0; i<nx; i++) qspi_ptr[QSPI_DTR/4] = txbuf[i];
+    //for (int i=0; i<nx; i++) { printf("%02x ", txbuf[i]); } printf("\n");
+
+    // 3. Issue chip select by writing 0x00 to SSR(70h).
+    printf("asserting chip select\n");
+    qspi_ptr[QSPI_SSR/4] = 0x00;
+
+    // 4. Enable master transaction by deasserting the CR master inhibit bit.
+    printf("deasserting master inhibit\n");
+    qspi_ptr[QSPI_CR/4] = QSPI_SPICR_MANUAL_SS | QSPI_SPICR_MASTER_ENABLE | QSPI_SPICR_SPI_ENABLE;
+
+    printf("\nQSPI_SR = 0x%08x\n", qspi_ptr[QSPI_SR/4]);
+
+    // wait for tx fifo empty
+    printf("waiting for tx fifo empty\n");
+    while (((qspi_ptr[QSPI_SR/4]) & 0x04) == 0);
+    //usleep(10);
+
+    printf("\nQSPI_SR = 0x%08x\n", qspi_ptr[QSPI_SR/4]);
+
+    // 5. Deassert chip select by writing 0x01 to SPISSR.
+    printf("deasserting chip select\n");
+    qspi_ptr[QSPI_SSR/4] = 0xff;
+
+    // 6. Disable master transaction by asserting the SPICR master inhibit bit.
+    printf("asserting master inhibit\n");
+    qspi_ptr[QSPI_CR/4] = QSPI_SPICR_MANUAL_SS | QSPI_SPICR_MASTER_INHIBIT | QSPI_SPICR_MASTER_ENABLE | QSPI_SPICR_SPI_ENABLE;
+
+    // read the rxdata from SPIDRX
+    printf("reading rxbuf\n");
+    printf("\nQSPI_SR = 0x%08x\n", qspi_ptr[QSPI_SR/4]);
+    int index = 0;
+    while (((qspi_ptr[QSPI_SR/4]) & 0x01) == 0) {
+        rxbuf[index] = (uint8_t)((qspi_ptr[QSPI_DRR/4]) & 0x00ff);
+        index++;
+    }
+    printf("\nQSPI_SR = 0x%08x\n", qspi_ptr[QSPI_SR/4]);
+    
+}
+
+
 void print_qspi_regs(uint32_t* qspi_ptr) {
     printf("QSPI_SRR = 0x%08x\n", qspi_ptr[QSPI_SRR/4]);
-    printf("QSPI_SPICR = 0x%08x\n", qspi_ptr[QSPI_SPICR/4]);
-    printf("QSPI_SPISR = 0x%08x\n", qspi_ptr[QSPI_SPISR/4]);
+    printf("QSPI_CR = 0x%08x\n", qspi_ptr[QSPI_CR/4]);
+    printf("QSPI_SR = 0x%08x\n", qspi_ptr[QSPI_SR/4]);
     printf("QSPI_DRR = 0x%08x\n", qspi_ptr[QSPI_DRR/4]);
-    printf("QSPI_SPISSR = 0x%08x\n", qspi_ptr[QSPI_SPISSR/4]);
+    printf("QSPI_SSR = 0x%08x\n", qspi_ptr[QSPI_SSR/4]);
     printf("QSPI_TX_OCCUPANCY = 0x%08x\n", qspi_ptr[QSPI_TX_OCCUPANCY/4]);
     printf("QSPI_RX_OCCUPANCY = 0x%08x\n", qspi_ptr[QSPI_RX_OCCUPANCY/4]);
     printf("QSPI_DGIER = 0x%08x\n", qspi_ptr[QSPI_DGIER/4]);
