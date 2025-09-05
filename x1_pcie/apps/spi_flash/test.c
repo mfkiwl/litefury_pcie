@@ -31,10 +31,10 @@ int main(int argc,char** argv)
     uint32_t * qspi_ptr = base_addr + QSPI_OFFSET;
 
     printf("QSPI_SRR = 0x%08x\n", qspi_ptr[QSPI_SRR/4]);
-    printf("QSPI_SPICR = 0x%08x\n", qspi_ptr[QSPI_SPICR/4]);
-    printf("QSPI_SPISR = 0x%08x\n", qspi_ptr[QSPI_SPISR/4]);
+    printf("QSPI_CR = 0x%08x\n", qspi_ptr[QSPI_CR/4]);
+    printf("QSPI_SR = 0x%08x\n", qspi_ptr[QSPI_SR/4]);
     printf("QSPI_DRR = 0x%08x\n", qspi_ptr[QSPI_DRR/4]);
-    printf("QSPI_SPISSR = 0x%08x\n", qspi_ptr[QSPI_SPISSR/4]);
+    printf("QSPI_SSR = 0x%08x\n", qspi_ptr[QSPI_SSR/4]);
     printf("QSPI_TX_OCCUPANCY = 0x%08x\n", qspi_ptr[QSPI_TX_OCCUPANCY/4]);
     printf("QSPI_RX_OCCUPANCY = 0x%08x\n", qspi_ptr[QSPI_RX_OCCUPANCY/4]);
     printf("QSPI_DGIER = 0x%08x\n", qspi_ptr[QSPI_DGIER/4]);
