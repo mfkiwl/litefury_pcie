@@ -57,7 +57,7 @@ int main(int argc,char** argv)
 
 
     // try to read the JEDEC ID
-    nx = 5;
+    nx = 16;
     for (int i=0; i<nx; i++) { txbuf[i] = 0; rxbuf[i] = 0; }
     txbuf[0] = 0x9f;
     spi_transfer(qspi_ptr, txbuf, rxbuf, nx);
