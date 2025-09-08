@@ -14,9 +14,8 @@ void print_qspi_regs(uint32_t* qspi_ptr);
 
 int main(int argc,char** argv)
 {
-    int nx;
-
-    uint8_t txbuf[512], rxbuf[512];
+    //int nx;
+    //uint8_t txbuf[512], rxbuf[512];
 
     char devstr[] = "/dev/xdma0_bypass";
 
@@ -45,25 +44,6 @@ int main(int argc,char** argv)
     qspi_ptr[QSPI_SSR/4] = 0xff;
 
     print_qspi_regs(qspi_ptr);
-
-
-    // // software reset flash memory
-    // nx = 5;
-    // for (int i=0; i<nx; i++) { txbuf[i] = 0; rxbuf[i] = 0; }
-    // txbuf[0] = 0x99;
-    // spi_transfer(qspi_ptr, txbuf, rxbuf, nx);
-    // for (int i=0; i<nx; i++) printf("%02x ", rxbuf[i]);
-    // printf("\n");
-
-
-    // try to read the JEDEC ID
-    nx = 16;
-    for (int i=0; i<nx; i++) { txbuf[i] = 0; rxbuf[i] = 0; }
-    txbuf[0] = 0x9f;
-    spi_transfer(qspi_ptr, txbuf, rxbuf, nx);
-    for (int i=0; i<nx; i++) printf("%02x ", rxbuf[i]);
-    printf("\n");
-
 
     munmap(base_addr,FPGA_SIZE);
 
