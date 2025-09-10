@@ -16,6 +16,10 @@ source ../source/system.tcl
 generate_target {synthesis implementation} [get_files ./proj.srcs/sources_1/bd/system/system.bd]
 set_property synth_checkpoint_mode None    [get_files ./proj.srcs/sources_1/bd/system/system.bd]
 
+source ../source/system2.tcl
+generate_target {synthesis implementation} [get_files ./proj.srcs/sources_1/bd/system2/system2.bd]
+set_property synth_checkpoint_mode None    [get_files ./proj.srcs/sources_1/bd/system2/system2.bd]
+
 read_verilog -sv ../source/iir_verilog/iir_filter.sv
 read_verilog -sv ../source/iir_verilog/iir_sos_dsp48.sv
 read_verilog -sv ../source/iir_verilog/round_n_sat.sv

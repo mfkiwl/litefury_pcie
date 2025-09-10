@@ -66,18 +66,43 @@ module top (
         .vinstru_bram_dout  (vinstru_bram_dout),
         .vinstru_bram_en    (vinstru_bram_en),
         .vinstru_bram_rst   (vinstru_bram_rst),
-        .vinstru_bram_we    (vinstru_bram_we),
-        // 
-        .qspi_io0_i(qspi_io_i[0]), .qspi_io0_o(qspi_io_o[0]), .qspi_io0_t(qspi_io_t[0]),
-        .qspi_io1_i(qspi_io_i[1]), .qspi_io1_o(qspi_io_o[1]), .qspi_io1_t(qspi_io_t[1]),
-        .qspi_io2_i(qspi_io_i[2]), .qspi_io2_o(qspi_io_o[2]), .qspi_io2_t(qspi_io_t[2]),
-        .qspi_io3_i(qspi_io_i[3]), .qspi_io3_o(qspi_io_o[3]), .qspi_io3_t(qspi_io_t[3]),
-        .qspi_ss_i(qspi_ss_i),     .qspi_ss_o(qspi_ss_o),     .qspi_ss_t(qspi_ss_t),
+        .vinstru_bram_we    (vinstru_bram_we)                             
+    );
+    
+    system2 system2_i (
+        .resetn                 (axi_aresetn),
+        .clkin                  (axi_aclk),
         //
-        .startup_cfgclk     (startup_cfgclk),
-        .startup_cfgmclk    (startup_cfgmclk),
-        .startup_eos        (startup_eos),
-        .startup_preq       (startup_preq)                                
+        .flash_m_axis_tdata     (flash_m_axis_tdata),
+        .flash_m_axis_tlast     (flash_m_axis_tlast),
+        .flash_m_axis_tready    (flash_m_axis_tready),
+        .flash_m_axis_tvalid    (flash_m_axis_tvalid),
+        //
+        .flash_s_axis_tdata     (flash_s_axis_tdata),
+        .flash_s_axis_tlast     (flash_s_axis_tlast),
+        .flash_s_axis_tready    (flash_s_axis_tready),
+        .flash_s_axis_tvalid    (flash_s_axis_tvalid),
+        //
+        .qspi_io0_i             (qspi_io0_i),
+        .qspi_io0_o             (qspi_io0_o),
+        .qspi_io0_t             (qspi_io0_t),
+        .qspi_io1_i             (qspi_io1_i),
+        .qspi_io1_o             (qspi_io1_o),
+        .qspi_io1_t             (qspi_io1_t),
+        .qspi_io2_i             (qspi_io2_i),
+        .qspi_io2_o             (qspi_io2_o),
+        .qspi_io2_t             (qspi_io2_t),
+        .qspi_io3_i             (qspi_io3_i),
+        .qspi_io3_o             (qspi_io3_o),
+        .qspi_io3_t             (qspi_io3_t),
+        .qspi_ss_i              (qspi_ss_i),
+        .qspi_ss_o              (qspi_ss_o),
+        .qspi_ss_t              (qspi_ss_t),
+        //
+        .startup_cfgclk         (startup_cfgclk),
+        .startup_cfgmclk        (startup_cfgmclk),
+        //.startup_eos            (startup_eos),
+        .startup_preq           (startup_preq)           
     );
 
     IOBUF qspi_io0_iobuf (.I(qspi_io0_o), .IO(qspi_data[0]), .O(qspi_io0_i), .T(qspi_io0_t));
