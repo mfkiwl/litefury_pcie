@@ -39,6 +39,11 @@ int main(int argc,char** argv)
     errors = ram_test(bram_ptr, VINSTRU_RAM_SIZE);
     printf("VINSTRU_RAM: bram_ptr = %p, errors = %d\n", bram_ptr, errors);
 
+    // Test the VINSTRU bram.
+    bram_ptr = base_addr + FLASH_RAM_OFFSET;
+    errors = ram_test(bram_ptr, FLASH_RAM_SIZE);
+    printf("FLASH_RAM: bram_ptr = %p, errors = %d\n", bram_ptr, errors);
+
     reg_ptr[FPGA_LED] += 2;
 
     munmap(base_addr, FPGA_SIZE);

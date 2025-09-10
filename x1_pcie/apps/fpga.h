@@ -25,6 +25,10 @@
 #define     VINSTRU_RAM_OFFSET      0x00020000
 #define     VINSTRU_RAM_SIZE        0x00004000 // 16KB = 4K 32-bit words
 
+// QSPI Flash Bram for passing data to/from the Microblaze QSPI Flash controller.
+#define     FLASH_RAM_OFFSET        0x00040000
+#define     FLASH_RAM_SIZE          0x00001000 // 4K bytes
+
 // XADC for temperature and voltage monitoring in the FPGA
 #define     XADC_OFFSET             0x00030000
 // XADC register offsets
