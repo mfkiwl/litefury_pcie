@@ -1,5 +1,9 @@
+// 0x00000102   - added system2 block diagram to handle qspi access.
 
-module top (
+module top #(
+    parameter logic[31:0] VERSION       = 32'h00000102,
+    parameter logic[31:0] ID            = 32'hdeadbeef
+)(
     //
     input   logic       sysclk_p,
     input   logic       sysclk_n,
@@ -19,6 +23,8 @@ module top (
     inout   logic       qspi_ss
 );
 
+    assign pcie_clkreq_l = 1'b0;
+    
     logic [11:0]    regfile_addr;
     logic           regfile_clk;
     logic [31:0]    regfile_din;
@@ -35,11 +41,15 @@ module top (
     logic           vinstru_bram_rst;
     logic [3:0]     vinstru_bram_we;    
     
-    logic[3:0] qspi_io_i, qspi_io_o, qspi_io_t; 
-    logic qspi_ss_i, qspi_ss_o, qspi_ss_t;       
-
-    logic startup_cfgclk, startup_cfgmclk, startup_eos, startup_preq;     
-
+    logic [31:0]    flash_bram_addr;
+    logic           flash_bram_clk;
+    logic [31:0]    flash_bram_din;
+    logic [31:0]    flash_bram_dout;
+    logic           flash_bram_en;
+    logic           flash_bram_rst;
+    logic [3:0]     flash_bram_we;
+    
+    // block diagram containing PCIe interface
     system system_i(
         .pcie_clkin_clk_n   (pcie_clkin_clk_n),
         .pcie_clkin_clk_p   (pcie_clkin_clk_p),
@@ -66,22 +76,25 @@ module top (
         .vinstru_bram_dout  (vinstru_bram_dout),
         .vinstru_bram_en    (vinstru_bram_en),
         .vinstru_bram_rst   (vinstru_bram_rst),
-        .vinstru_bram_we    (vinstru_bram_we)                             
+        .vinstru_bram_we    (vinstru_bram_we),
+        //
+        .flash_bram_addr    (flash_bram_addr),
+        .flash_bram_clk     (flash_bram_clk),
+        .flash_bram_din     (flash_bram_din),
+        .flash_bram_dout    (flash_bram_dout),
+        .flash_bram_en      (flash_bram_en),
+        .flash_bram_rst     (flash_bram_rst),
+        .flash_bram_we      (flash_bram_we)                                     
     );
+        
+    logic[3:0] qspi_io_i, qspi_io_o, qspi_io_t; 
+    logic qspi_ss_i, qspi_ss_o, qspi_ss_t;       
+    logic startup_cfgclk, startup_cfgmclk, startup_eos, startup_preq;     
     
+    // block diagram containing Microblaze for QSPI flash control.
     system2 system2_i (
         .resetn                 (axi_aresetn),
         .clkin                  (axi_aclk),
-        //
-        .flash_m_axis_tdata     (flash_m_axis_tdata),
-        .flash_m_axis_tlast     (flash_m_axis_tlast),
-        .flash_m_axis_tready    (flash_m_axis_tready),
-        .flash_m_axis_tvalid    (flash_m_axis_tvalid),
-        //
-        .flash_s_axis_tdata     (flash_s_axis_tdata),
-        .flash_s_axis_tlast     (flash_s_axis_tlast),
-        .flash_s_axis_tready    (flash_s_axis_tready),
-        .flash_s_axis_tvalid    (flash_s_axis_tvalid),
         //
         .qspi_io0_i             (qspi_io0_i),
         .qspi_io0_o             (qspi_io0_o),
@@ -101,8 +114,15 @@ module top (
         //
         .startup_cfgclk         (startup_cfgclk),
         .startup_cfgmclk        (startup_cfgmclk),
-        //.startup_eos            (startup_eos),
-        .startup_preq           (startup_preq)           
+        .startup_preq           (startup_preq),
+        //
+        .flash_bram_addr        (flash_bram_addr),
+        .flash_bram_clk         (flash_bram_clk),
+        .flash_bram_din         (flash_bram_din),
+        .flash_bram_dout        (flash_bram_dout),
+        .flash_bram_en          (flash_bram_en),
+        .flash_bram_rst         (flash_bram_rst),
+        .flash_bram_we          (flash_bram_we)        
     );
 
     IOBUF qspi_io0_iobuf (.I(qspi_io0_o), .IO(qspi_data[0]), .O(qspi_io0_i), .T(qspi_io0_t));
@@ -111,10 +131,9 @@ module top (
     IOBUF qspi_io3_iobuf (.I(qspi_io3_o), .IO(qspi_data[3]), .O(qspi_io3_i), .T(qspi_io3_t));
     IOBUF qspi_ss_iobuf  (.I(qspi_ss_o),  .IO(qspi_ss),      .O(qspi_ss_i),  .T(qspi_ss_t));
                     
-    assign pcie_clkreq_l = 1'b0;
 
-    logic clk;
-    IBUFDS #(.DIFF_TERM("TRUE"), .IBUF_LOW_PWR("TRUE"), .IOSTANDARD("DEFAULT")) IBUFDS_inst (.O(clk), .I(sysclk_p), .IB(sysclk_n));
+//    logic clk;
+//    IBUFDS #(.DIFF_TERM("TRUE"), .IBUF_LOW_PWR("TRUE"), .IOSTANDARD("DEFAULT")) IBUFDS_inst (.O(clk), .I(sysclk_p), .IB(sysclk_n));
     
     logic[3:0] led;
     logic[27:0] led_count;
@@ -137,8 +156,8 @@ module top (
     localparam int Nregs = 16;
     logic [Nregs-1:0][31:0] slv_reg, slv_read;
 
-    assign slv_read[0] = 32'hdeadbeef;
-    assign slv_read[1] = 32'h76543210;
+    assign slv_read[0] = ID;
+    assign slv_read[1] = VERSION;
     
     assign led = slv_reg[2][3:0];
     assign slv_read[2] = slv_reg[2];

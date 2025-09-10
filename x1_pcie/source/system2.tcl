@@ -134,13 +134,12 @@ xilinx.com:ip:microblaze:11.0\
 xilinx.com:ip:axi_intc:4.1\
 xilinx.com:ip:axi_quad_spi:3.2\
 xilinx.com:ip:mdm:3.2\
-xilinx.com:ip:axi_fifo_mm_s:4.3\
-xilinx.com:ip:axis_dwidth_converter:1.1\
 xilinx.com:ip:axi_hwicap:3.0\
 xilinx.com:inline_hdl:ilconcat:1.0\
+xilinx.com:ip:axi_bram_ctrl:4.1\
+xilinx.com:ip:blk_mem_gen:8.4\
 xilinx.com:ip:lmb_v10:3.0\
 xilinx.com:ip:lmb_bram_if_cntlr:4.0\
-xilinx.com:ip:blk_mem_gen:8.4\
 "
 
    set list_ips_missing ""
@@ -298,22 +297,12 @@ proc create_root_design { parentCell } {
   # Create interface ports
   set qspi [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:spi_rtl:1.0 qspi ]
 
-  set flash_s_axis [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:axis_rtl:1.0 flash_s_axis ]
-  set_property -dict [ list \
-   CONFIG.HAS_TKEEP {0} \
-   CONFIG.HAS_TLAST {0} \
-   CONFIG.HAS_TREADY {1} \
-   CONFIG.HAS_TSTRB {0} \
-   CONFIG.LAYERED_METADATA {undef} \
-   CONFIG.TDATA_NUM_BYTES {1} \
-   CONFIG.TDEST_WIDTH {0} \
-   CONFIG.TID_WIDTH {0} \
-   CONFIG.TUSER_WIDTH {0} \
-   ] $flash_s_axis
-
-  set flash_m_axis [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:axis_rtl:1.0 flash_m_axis ]
-
   set startup [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_startup_io:startup_io_rtl:1.0 startup ]
+
+  set flash_bram [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:bram_rtl:1.0 flash_bram ]
+  set_property -dict [ list \
+   CONFIG.MASTER_TYPE {BRAM_CTRL} \
+   ] $flash_bram
 
 
   # Create ports
@@ -387,32 +376,6 @@ proc create_root_design { parentCell } {
   ] $mdm_2
 
 
-  # Create instance: axi_fifo_mm_s_0, and set properties
-  set axi_fifo_mm_s_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_fifo_mm_s:4.3 axi_fifo_mm_s_0 ]
-  set_property -dict [list \
-    CONFIG.C_RX_FIFO_DEPTH {2048} \
-    CONFIG.C_RX_FIFO_PE_THRESHOLD {5} \
-    CONFIG.C_RX_FIFO_PF_THRESHOLD {507} \
-    CONFIG.C_TX_FIFO_DEPTH {2048} \
-    CONFIG.C_TX_FIFO_PE_THRESHOLD {5} \
-    CONFIG.C_TX_FIFO_PF_THRESHOLD {507} \
-    CONFIG.C_USE_TX_CTRL {0} \
-  ] $axi_fifo_mm_s_0
-
-
-  # Create instance: axis_dwidth_converter_0, and set properties
-  set axis_dwidth_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_dwidth_converter:1.1 axis_dwidth_converter_0 ]
-  set_property -dict [list \
-    CONFIG.HAS_TLAST {1} \
-    CONFIG.M_TDATA_NUM_BYTES {4} \
-  ] $axis_dwidth_converter_0
-
-
-  # Create instance: axis_dwidth_converter_1, and set properties
-  set axis_dwidth_converter_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_dwidth_converter:1.1 axis_dwidth_converter_1 ]
-  set_property CONFIG.M_TDATA_NUM_BYTES {1} $axis_dwidth_converter_1
-
-
   # Create instance: axi_hwicap_0, and set properties
   set axi_hwicap_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_hwicap:3.0 axi_hwicap_0 ]
 
@@ -421,27 +384,33 @@ proc create_root_design { parentCell } {
   set_property CONFIG.NUM_PORTS {4} $ilconcat_0
 
 
+  # Create instance: axi_bram_ctrl_0, and set properties
+  set axi_bram_ctrl_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.1 axi_bram_ctrl_0 ]
+  set_property CONFIG.SINGLE_PORT_BRAM {1} $axi_bram_ctrl_0
+
+
+  # Create instance: axi_bram_ctrl_0_bram, and set properties
+  set axi_bram_ctrl_0_bram [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.4 axi_bram_ctrl_0_bram ]
+  set_property CONFIG.Memory_Type {True_Dual_Port_RAM} $axi_bram_ctrl_0_bram
+
+
   # Create interface connections
+  connect_bd_intf_net -intf_net BRAM_PORTB_0_1 [get_bd_intf_ports flash_bram] [get_bd_intf_pins axi_bram_ctrl_0_bram/BRAM_PORTB]
   connect_bd_intf_net -intf_net S00_AXI_1 [get_bd_intf_pins microblaze_1_axi_periph/S00_AXI] [get_bd_intf_pins microblaze_1/M_AXI_DP]
-  connect_bd_intf_net -intf_net S_AXIS_0_1 [get_bd_intf_ports flash_s_axis] [get_bd_intf_pins axis_dwidth_converter_0/S_AXIS]
-  connect_bd_intf_net -intf_net axi_fifo_mm_s_0_AXI_STR_TXD [get_bd_intf_pins axi_fifo_mm_s_0/AXI_STR_TXD] [get_bd_intf_pins axis_dwidth_converter_1/S_AXIS]
+  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0_bram/BRAM_PORTA] [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_intc_1_interrupt [get_bd_intf_pins axi_intc_1/interrupt] [get_bd_intf_pins microblaze_1/INTERRUPT]
   connect_bd_intf_net -intf_net axi_quad_spi_1_SPI_0 [get_bd_intf_ports qspi] [get_bd_intf_pins axi_quad_spi_1/SPI_0]
   connect_bd_intf_net -intf_net axi_quad_spi_1_STARTUP_IO [get_bd_intf_ports startup] [get_bd_intf_pins axi_quad_spi_1/STARTUP_IO]
-  connect_bd_intf_net -intf_net axis_dwidth_converter_0_M_AXIS [get_bd_intf_pins axis_dwidth_converter_0/M_AXIS] [get_bd_intf_pins axi_fifo_mm_s_0/AXI_STR_RXD]
-  connect_bd_intf_net -intf_net axis_dwidth_converter_1_M_AXIS [get_bd_intf_ports flash_m_axis] [get_bd_intf_pins axis_dwidth_converter_1/M_AXIS]
   connect_bd_intf_net -intf_net mdm_2_MBDEBUG_0 [get_bd_intf_pins mdm_2/MBDEBUG_0] [get_bd_intf_pins microblaze_1/DEBUG]
   connect_bd_intf_net -intf_net microblaze_0_axi_periph1_M00_AXI [get_bd_intf_pins microblaze_1_axi_periph/M00_AXI] [get_bd_intf_pins axi_intc_1/s_axi]
   connect_bd_intf_net -intf_net microblaze_0_axi_periph1_M01_AXI [get_bd_intf_pins mdm_2/S_AXI] [get_bd_intf_pins microblaze_1_axi_periph/M01_AXI]
   connect_bd_intf_net -intf_net microblaze_0_axi_periph1_M02_AXI [get_bd_intf_pins microblaze_1_axi_periph/M02_AXI] [get_bd_intf_pins axi_quad_spi_1/AXI_LITE]
-  connect_bd_intf_net -intf_net microblaze_0_axi_periph1_M03_AXI [get_bd_intf_pins axi_fifo_mm_s_0/S_AXI] [get_bd_intf_pins microblaze_1_axi_periph/M03_AXI]
+  connect_bd_intf_net -intf_net microblaze_1_axi_periph_M03_AXI [get_bd_intf_pins axi_bram_ctrl_0/S_AXI] [get_bd_intf_pins microblaze_1_axi_periph/M03_AXI]
   connect_bd_intf_net -intf_net microblaze_1_axi_periph_M04_AXI [get_bd_intf_pins axi_hwicap_0/S_AXI_LITE] [get_bd_intf_pins microblaze_1_axi_periph/M04_AXI]
   connect_bd_intf_net -intf_net microblaze_1_dlmb_1 [get_bd_intf_pins microblaze_1/DLMB] [get_bd_intf_pins microblaze_1_local_memory/DLMB]
   connect_bd_intf_net -intf_net microblaze_1_ilmb_1 [get_bd_intf_pins microblaze_1/ILMB] [get_bd_intf_pins microblaze_1_local_memory/ILMB]
 
   # Create port connections
-  connect_bd_net -net axi_fifo_mm_s_0_interrupt  [get_bd_pins axi_fifo_mm_s_0/interrupt] \
-  [get_bd_pins ilconcat_0/In2]
   connect_bd_net -net axi_hwicap_0_ip2intc_irpt  [get_bd_pins axi_hwicap_0/ip2intc_irpt] \
   [get_bd_pins ilconcat_0/In3]
   connect_bd_net -net axi_quad_spi_1_eos  [get_bd_pins axi_quad_spi_1/eos] \
@@ -467,13 +436,11 @@ proc create_root_design { parentCell } {
   [get_bd_pins axi_quad_spi_1/ext_spi_clk] \
   [get_bd_pins axi_quad_spi_1/s_axi_aclk] \
   [get_bd_pins mdm_2/S_AXI_ACLK] \
-  [get_bd_pins axi_fifo_mm_s_0/s_axi_aclk] \
-  [get_bd_pins axis_dwidth_converter_0/aclk] \
-  [get_bd_pins axis_dwidth_converter_1/aclk] \
   [get_bd_pins microblaze_1_axi_periph/M03_ACLK] \
   [get_bd_pins axi_hwicap_0/s_axi_aclk] \
   [get_bd_pins axi_hwicap_0/icap_clk] \
-  [get_bd_pins microblaze_1_axi_periph/M04_ACLK]
+  [get_bd_pins microblaze_1_axi_periph/M04_ACLK] \
+  [get_bd_pins axi_bram_ctrl_0/s_axi_aclk]
   connect_bd_net -net reset_1  [get_bd_ports resetn] \
   [get_bd_pins rst_clk_wiz_0_100M/ext_reset_in]
   connect_bd_net -net rst_clk_wiz_0_100M_bus_struct_reset  [get_bd_pins rst_clk_wiz_0_100M/bus_struct_reset] \
@@ -489,21 +456,19 @@ proc create_root_design { parentCell } {
   [get_bd_pins microblaze_1_axi_periph/M00_ARESETN] \
   [get_bd_pins axi_quad_spi_1/s_axi_aresetn] \
   [get_bd_pins mdm_2/S_AXI_ARESETN] \
-  [get_bd_pins axi_fifo_mm_s_0/s_axi_aresetn] \
-  [get_bd_pins axis_dwidth_converter_0/aresetn] \
-  [get_bd_pins axis_dwidth_converter_1/aresetn] \
   [get_bd_pins microblaze_1_axi_periph/M03_ARESETN] \
   [get_bd_pins axi_hwicap_0/s_axi_aresetn] \
-  [get_bd_pins microblaze_1_axi_periph/M04_ARESETN]
+  [get_bd_pins microblaze_1_axi_periph/M04_ARESETN] \
+  [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn]
 
   # Create address segments
-  assign_bd_address -offset 0x44A10000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_1/Data] [get_bd_addr_segs axi_fifo_mm_s_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0xC0000000 -range 0x00001000 -target_address_space [get_bd_addr_spaces microblaze_1/Data] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x40200000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_1/Data] [get_bd_addr_segs axi_hwicap_0/S_AXI_LITE/Reg] -force
   assign_bd_address -offset 0x41200000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_1/Data] [get_bd_addr_segs axi_intc_1/S_AXI/Reg] -force
   assign_bd_address -offset 0x44A00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_1/Data] [get_bd_addr_segs axi_quad_spi_1/AXI_LITE/Reg] -force
   assign_bd_address -offset 0x00000000 -range 0x00008000 -target_address_space [get_bd_addr_spaces microblaze_1/Data] [get_bd_addr_segs microblaze_1_local_memory/dlmb_bram_if_cntlr/SLMB/Mem] -force
   assign_bd_address -offset 0x41400000 -range 0x00001000 -target_address_space [get_bd_addr_spaces microblaze_1/Data] [get_bd_addr_segs mdm_2/S_AXI/Reg] -force
-  assign_bd_address -offset 0x00000000 -range 0x00008000 -target_address_space [get_bd_addr_spaces microblaze_1/Instruction] [get_bd_addr_segs microblaze_1_local_memory/ilmb_bram_if_cntlr/SLMB/Mem] -force
+  assign_bd_address -offset 0x00000000 -range 0x00004000 -target_address_space [get_bd_addr_spaces microblaze_1/Instruction] [get_bd_addr_segs microblaze_1_local_memory/ilmb_bram_if_cntlr/SLMB/Mem] -force
 
 
   # Restore current instance
